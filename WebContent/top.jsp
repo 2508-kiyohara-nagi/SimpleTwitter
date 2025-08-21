@@ -12,7 +12,7 @@
 
     </head>
        <body>
-                <div class="header">
+        <div class="header">
 		    <c:if test="${ empty loginUser }">
 		        <a href="login">ログイン</a>
 		        <a href="signup">登録する</a>
