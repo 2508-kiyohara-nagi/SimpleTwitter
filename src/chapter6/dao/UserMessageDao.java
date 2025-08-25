@@ -32,7 +32,7 @@ public class UserMessageDao {
 
     }
 
-    public List<UserMessage> select(Connection connection, int num) {
+    public List<UserMessage> select(Connection connection,Integer id, int num) {
 
 	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
         " : " + new Object(){}.getClass().getEnclosingMethod().getName());
@@ -40,6 +40,7 @@ public class UserMessageDao {
         PreparedStatement ps = null;
         try {
             StringBuilder sql = new StringBuilder();
+
             sql.append("SELECT ");
             sql.append("    messages.id as id, ");
             sql.append("    messages.text as text, ");
@@ -48,16 +49,26 @@ public class UserMessageDao {
             sql.append("    users.name as name, ");
             sql.append("    messages.created_date as created_date ");
             sql.append("FROM messages ");
+            //2つ以上のテーブルから結合
             sql.append("INNER JOIN users ");
             sql.append("ON messages.user_id = users.id ");
+            //結合条件の指定
+            if(id != null) {
+            	sql.append("WHERE messages.user_id = ? ");
+            }
             sql.append("ORDER BY created_date DESC limit " + num);
 
             ps = connection.prepareStatement(sql.toString());
+            if(id != null) {
+            	String userid = Integer.toString(id);
+            	ps.setString(1, userid);
+            }
 
             ResultSet rs = ps.executeQuery();
 
             List<UserMessage> messages = toUserMessages(rs);
             return messages;
+
         } catch (SQLException e) {
 		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
             throw new SQLRuntimeException(e);
@@ -74,8 +85,9 @@ public class UserMessageDao {
 
         List<UserMessage> messages = new ArrayList<UserMessage>();
         try {
+
             while (rs.next()) {
-                UserMessage message = new UserMessage();
+            	UserMessage message = new UserMessage();
                 message.setId(rs.getInt("id"));
                 message.setText(rs.getString("text"));
                 message.setUserId(rs.getInt("user_id"));
@@ -85,6 +97,7 @@ public class UserMessageDao {
 
                 messages.add(message);
             }
+
             return messages;
         } finally {
             close(rs);
