@@ -95,12 +95,8 @@ public class SettingServlet extends HttpServlet {
         User user = new User();
         user.setId(Integer.parseInt(request.getParameter("id")));
         user.setName(request.getParameter("name"));
+        user.setPassword(request.getParameter("password"));
         user.setAccount(request.getParameter("account"));
-        //パスワードがないならpassword変数をnullに
-        if (!StringUtils.isBlank(request.getParameter("password"))) {
-        	user.setPassword(request.getParameter("password"));
-        }
-
         user.setEmail(request.getParameter("email"));
         user.setDescription(request.getParameter("description"));
         return user;

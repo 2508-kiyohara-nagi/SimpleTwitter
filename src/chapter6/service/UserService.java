@@ -124,7 +124,7 @@ public class UserService {
         String password = user.getPassword();
         try {
             // パスワードがあればパスワード暗号化
-        	if(!StringUtils.isEmpty(password)){
+        	if(!StringUtils.isBlank(password)){
                 String encPassword = CipherUtil.encrypt(password);
                 user.setPassword(encPassword);
              }
