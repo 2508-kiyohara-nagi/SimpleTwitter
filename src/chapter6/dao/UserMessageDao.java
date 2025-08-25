@@ -32,7 +32,7 @@ public class UserMessageDao {
 
     }
 
-    public List<UserMessage> select(Connection connection,Integer id, int num) {
+    public List<UserMessage> select(Connection connection, Integer id, int num) {
 
 	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
         " : " + new Object(){}.getClass().getEnclosingMethod().getName());
@@ -60,8 +60,7 @@ public class UserMessageDao {
 
             ps = connection.prepareStatement(sql.toString());
             if(id != null) {
-            	String userid = Integer.toString(id);
-            	ps.setString(1, userid);
+            	ps.setInt(1, id);
             }
 
             ResultSet rs = ps.executeQuery();
