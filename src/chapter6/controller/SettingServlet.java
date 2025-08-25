@@ -65,6 +65,7 @@ public class SettingServlet extends HttpServlet {
         List<String> errorMessages = new ArrayList<String>();
 
         User user = getUser(request);
+
         if (isValid(user, errorMessages)) {
             try {
                 new UserService().update(user);
@@ -95,7 +96,11 @@ public class SettingServlet extends HttpServlet {
         user.setId(Integer.parseInt(request.getParameter("id")));
         user.setName(request.getParameter("name"));
         user.setAccount(request.getParameter("account"));
-        user.setPassword(request.getParameter("password"));
+        //パスワードがないならpassword変数をnullに
+        if (!StringUtils.isBlank(request.getParameter("password"))) {
+        	user.setPassword(request.getParameter("password"));
+        }
+
         user.setEmail(request.getParameter("email"));
         user.setDescription(request.getParameter("description"));
         return user;
@@ -109,7 +114,6 @@ public class SettingServlet extends HttpServlet {
 
         String name = user.getName();
         String account = user.getAccount();
-        String password = user.getPassword();
         String email = user.getEmail();
 
         if (!StringUtils.isEmpty(name) && (20 < name.length())) {
@@ -119,9 +123,6 @@ public class SettingServlet extends HttpServlet {
             errorMessages.add("アカウント名を入力してください");
         } else if (20 < account.length()) {
             errorMessages.add("アカウント名は20文字以下で入力してください");
-        }
-        if (StringUtils.isEmpty(password)) {
-            errorMessages.add("パスワードを入力してください");
         }
         if (!StringUtils.isEmpty(email) && (50 < email.length())) {
             errorMessages.add("メールアドレスは50文字以下で入力してください");
