@@ -111,6 +111,8 @@ public class SettingServlet extends HttpServlet {
         String name = user.getName();
         String account = user.getAccount();
         String email = user.getEmail();
+        //DBから重複するアカウント名をだしている
+        User duplicateAccount = new UserService().select(account);
 
         if (!StringUtils.isEmpty(name) && (20 < name.length())) {
             errorMessages.add("名前は20文字以下で入力してください");
@@ -120,6 +122,10 @@ public class SettingServlet extends HttpServlet {
         } else if (20 < account.length()) {
             errorMessages.add("アカウント名は20文字以下で入力してください");
         }
+        //重複しているアカウントがないかつ重複アカウント名とログインしているユーザーが同じか確認
+        if(duplicateAccount != null && duplicateAccount.getId() != user.getId()) {
+        	errorMessages.add("すでに存在するアカウントです");
+    	}
         if (!StringUtils.isEmpty(email) && (50 < email.length())) {
             errorMessages.add("メールアドレスは50文字以下で入力してください");
         }

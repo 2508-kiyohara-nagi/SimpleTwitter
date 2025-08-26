@@ -91,6 +91,8 @@ public class SignUpServlet extends HttpServlet {
         String account = user.getAccount();
         String password = user.getPassword();
         String email = user.getEmail();
+        //DBから取得した重複アカウント名探索
+        User duplicateAccount = new UserService().select(account);
 
         if (!StringUtils.isEmpty(name) && (20 < name.length())) {
             errorMessages.add("名前は20文字以下で入力してください");
@@ -101,6 +103,9 @@ public class SignUpServlet extends HttpServlet {
         } else if (20 < account.length()) {
             errorMessages.add("アカウント名は20文字以下で入力してください");
         }
+        if(duplicateAccount != null) {
+        	errorMessages.add("すでに存在するアカウントです");
+    	}
 
         if (StringUtils.isEmpty(password)) {
             errorMessages.add("パスワードを入力してください");
