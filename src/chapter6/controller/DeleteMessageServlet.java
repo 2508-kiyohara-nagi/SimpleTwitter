@@ -34,8 +34,7 @@ public class DeleteMessageServlet extends HttpServlet {
   	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
   	        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
   	  //つぶやきのId取得
-  	  String messageIdParameter = request.getParameter("messageId");
-  	  int messageId = Integer.parseInt(messageIdParameter);
+  	  int messageId = Integer.parseInt(request.getParameter("messageId"));
 
       new MessageService().delete(messageId);
 

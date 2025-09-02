@@ -8,7 +8,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>簡易Twitter</title>
-         <link href="./css/style.css" rel="stylesheet" type="text/css">
+        <link href="./css/style.css" rel="stylesheet" type="text/css">
 
     </head>
        <body>
@@ -47,7 +47,7 @@
 	            いま、どうしてる？<br />
 	            <textarea name="text" cols="100" rows="5" class="tweet-box"></textarea>
 	            <br />
-	            <input type="submit" value="つぶやく">（140文字まで）
+	            <input type="submit" value="つぶやき">（140文字まで）
 	        </form>
 	    </c:if>
 	</div>
@@ -62,12 +62,18 @@
                 </span>
                 <span class="name"><c:out value="${message.name}" /></span>
             </div>
-            <div class="text"><c:out value="${message.text}" /></div>
+            <pre class="text"><c:out value="${message.text}" /></pre>
             <div class="date"><fmt:formatDate value="${message.createdDate}" pattern="yyyy/MM/dd HH:mm:ss" /></div>
-        <form action="deleteMessage" method="post">
-            <input type="hidden" name="messageId" value="${message.id}" />
-    		<input type="submit" value="削除" /><!--削除ボタン作成-->
-    	</form>
+        <c:if test="${ not empty loginUser and loginUser.id == message.userId}">
+	        <form action="edit" method="get">
+	        	<input type="hidden" name="messageId" value="${message.id}" />
+	        	<input type="submit" value="編集" /><!--編集ボタン作成-->
+	    	</form>
+        	<form action="deleteMessage" method="post">
+            	<input type="hidden" name="messageId" value="${message.id}" />
+    			<input type="submit" value="削除" /><!--削除ボタン作成-->
+    		</form>
+    	</c:if>
         </div>
     </c:forEach>
 	</div>

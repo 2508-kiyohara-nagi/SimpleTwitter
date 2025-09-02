@@ -4,6 +4,7 @@ import static chapter6.utils.CloseableUtil.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,6 +79,64 @@ public class MessageDao {
             ps = connection.prepareStatement(sql.toString());
 
             ps.setInt(1, messageId);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+            throw new SQLRuntimeException(e);
+        } finally {
+            close(ps);
+        }
+    }
+    public  Message findByText(Connection connection, int messageId) {
+
+  	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+          " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+
+          PreparedStatement ps = null;
+          try {
+              StringBuilder sql = new StringBuilder();
+              //DBからメッセージ情報を引き出す
+              sql.append("SELECT * FROM messages WHERE id = ?");
+              ps = connection.prepareStatement(sql.toString());
+              ps.setInt(1, messageId);
+
+              ResultSet rs = ps.executeQuery();
+
+              if (rs.next()) {
+
+                  Message message = new Message();
+                  message.setId(rs.getInt("id"));
+                  message.setText(rs.getString("text"));
+                  message.setUserId(rs.getInt("user_id"));
+                  message.setCreatedDate(rs.getTimestamp("created_date"));
+
+                  return message;
+              } else {
+                  return null;
+              }
+          } catch (SQLException e) {
+  		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+              throw new SQLRuntimeException(e);
+          } finally {
+              close(ps);
+          }
+      }
+    public void update(Connection connection, Message message) {
+
+	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+
+        PreparedStatement ps = null;
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append( "UPDATE messages SET text = ? WHERE id = ?");
+
+
+            ps = connection.prepareStatement(sql.toString());
+
+            ps.setString(1, message.getText());
+            ps.setInt(2, message.getId());
 
             ps.executeUpdate();
         } catch (SQLException e) {
