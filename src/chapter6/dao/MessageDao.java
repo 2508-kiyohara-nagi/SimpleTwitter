@@ -6,10 +6,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import chapter6.beans.Message;
+import chapter6.beans.UserMessage;
 import chapter6.exception.SQLRuntimeException;
 import chapter6.logging.InitApplication;
 
@@ -66,7 +69,7 @@ public class MessageDao {
     }
     public void delete(Connection connection, int messageId) {
 
-	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+    	log.info(new Object(){}.getClass().getEnclosingClass().getName() +
         " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
         PreparedStatement ps = null;
@@ -74,7 +77,6 @@ public class MessageDao {
             StringBuilder sql = new StringBuilder();
             sql.append("DELETE FROM messages WHERE ");
             sql.append("    id = ? ");
-            sql.append(";");
 
             ps = connection.prepareStatement(sql.toString());
 
@@ -88,7 +90,7 @@ public class MessageDao {
             close(ps);
         }
     }
-    public  Message findByText(Connection connection, int messageId) {
+    public  List<UserMessage> select(Connection connection, int messageId) {
 
   	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
           " : " + new Object(){}.getClass().getEnclosingMethod().getName());
@@ -103,18 +105,9 @@ public class MessageDao {
 
               ResultSet rs = ps.executeQuery();
 
-              if (rs.next()) {
+              List<UserMessage> message = toUserMessages(rs);
 
-                  Message message = new Message();
-                  message.setId(rs.getInt("id"));
-                  message.setText(rs.getString("text"));
-                  message.setUserId(rs.getInt("user_id"));
-                  message.setCreatedDate(rs.getTimestamp("created_date"));
-
-                  return message;
-              } else {
-                  return null;
-              }
+              return message;
           } catch (SQLException e) {
   		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
               throw new SQLRuntimeException(e);
@@ -122,6 +115,29 @@ public class MessageDao {
               close(ps);
           }
       }
+    private List<UserMessage> toUserMessages(ResultSet rs) throws SQLException {
+
+	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+
+        List<UserMessage> messages = new ArrayList<UserMessage>();
+        try {
+
+            while (rs.next()) {
+            	UserMessage message = new UserMessage();
+                message.setId(rs.getInt("id"));
+                message.setText(rs.getString("text"));
+                message.setUserId(rs.getInt("user_id"));
+                message.setCreatedDate(rs.getTimestamp("created_date"));
+
+                messages.add(message);
+            }
+
+            return messages;
+        } finally {
+            close(rs);
+        }
+    }
     public void update(Connection connection, Message message) {
 
 	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
@@ -130,8 +146,10 @@ public class MessageDao {
         PreparedStatement ps = null;
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append( "UPDATE messages SET text = ? WHERE id = ?");
-
+            sql.append( "UPDATE messages SET");
+            sql.append( " text = ?, ");
+            sql.append( " updated_date = CURRENT_TIMESTAMP ");
+            sql.append( " WHERE id = ? ");
 
             ps = connection.prepareStatement(sql.toString());
 

@@ -121,7 +121,7 @@ public class MessageService {
   	  }
 
     }
-    public Message findByText(int messageId){
+    public List<UserMessage> select(int messageId){
     	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
     	  	        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
@@ -129,7 +129,7 @@ public class MessageService {
     	  try {
     		  connection = getConnection();
 
-    		  Message message = new MessageDao().findByText(connection, messageId);
+    		  List<UserMessage> message = new MessageDao().select(connection, messageId);
 
               commit(connection);
 

@@ -41,8 +41,8 @@
 		<div class="form-area">
 		    <form action="edit" method="post">
 		        つぶやき<br />
-		    <pre><textarea name="text" cols="100" rows="5" class="tweet-box">${messageText}</textarea></pre>
-		    <input type="hidden" name="messageId" value="${messageId}" />
+		    <pre><textarea name="text" cols="100" rows="5" class="tweet-box">${message.text}</textarea></pre>
+		    <input type="hidden" name="messageId" value="${message.id}" />
 		    <input type="submit" value="更新">（140文字まで）
 		    </form>
 		    <br /><a href="./">戻る</a><br>

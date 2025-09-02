@@ -40,7 +40,6 @@
 	    </div>
 	    <c:remove var="errorMessages" scope="session" />
 	</c:if>
-
 	<div class="form-area">
 	    <c:if test="${ isShowMessageForm }">
 	        <form action="message" method="post">
@@ -52,32 +51,31 @@
 	    </c:if>
 	</div>
 	<div class="messages">
-    <c:forEach items="${messages}" var="message">
-        <div class="message">
-            <div class="account-name"><!--アカウント名にリンク設定-->
-                <span class="account">
-                	<a href="./?user_id=<c:out value="${message.userId}"/> ">
-                		<c:out value="${message.account}" />
-                	</a>
-                </span>
-                <span class="name"><c:out value="${message.name}" /></span>
-            </div>
-            <pre class="text"><c:out value="${message.text}" /></pre>
-            <div class="date"><fmt:formatDate value="${message.createdDate}" pattern="yyyy/MM/dd HH:mm:ss" /></div>
-        <c:if test="${ not empty loginUser and loginUser.id == message.userId}">
-	        <form action="edit" method="get">
-	        	<input type="hidden" name="messageId" value="${message.id}" />
-	        	<input type="submit" value="編集" /><!--編集ボタン作成-->
-	    	</form>
-        	<form action="deleteMessage" method="post">
-            	<input type="hidden" name="messageId" value="${message.id}" />
-    			<input type="submit" value="削除" /><!--削除ボタン作成-->
-    		</form>
-    	</c:if>
-        </div>
-    </c:forEach>
+    	<c:forEach items="${messages}" var="message">
+        	<div class="message">
+	            <div class="account-name"><!--アカウント名にリンク設定-->
+		            <span class="account">
+			            <a href="./?user_id=<c:out value="${message.userId}"/> ">
+			            	<c:out value="${message.account}" />
+			            </a>
+		            </span>
+		            <span class="name"><c:out value="${message.name}" /></span>
+	            </div>
+	            <pre class="text"><c:out value="${message.text}" /></pre>
+	            <div class="date"><fmt:formatDate value="${message.createdDate}" pattern="yyyy/MM/dd HH:mm:ss" /></div>
+		        <c:if test="${ not empty loginUser and loginUser.id == message.userId}">
+			        <form action="edit" method="get">
+			        	<input type="hidden" name="messageId" value="${message.id}" />
+			        	<input type="submit" value="編集" /><!--編集ボタン作成-->
+			    	</form>
+		        	<form action="deleteMessage" method="post">
+		            	<input type="hidden" name="messageId" value="${message.id}" />
+		    			<input type="submit" value="削除" /><!--削除ボタン作成-->
+		    		</form>
+		    	</c:if>
+        	</div>
+    	</c:forEach>
 	</div>
-
-            <div class="copyright"> Copyright(c)KiyoharaNagi</div>
+    <div class="copyright"> Copyright(c)KiyoharaNagi</div>
     </body>
 </html>

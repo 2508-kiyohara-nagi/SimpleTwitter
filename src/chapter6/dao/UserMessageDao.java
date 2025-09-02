@@ -78,7 +78,6 @@ public class UserMessageDao {
 
     private List<UserMessage> toUserMessages(ResultSet rs) throws SQLException {
 
-
 	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
         " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 

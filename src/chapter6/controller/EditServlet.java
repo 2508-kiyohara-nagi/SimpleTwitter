@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 
 import chapter6.beans.Message;
+import chapter6.beans.UserMessage;
 import chapter6.logging.InitApplication;
 import chapter6.service.MessageService;
 
@@ -45,7 +46,6 @@ public class EditServlet extends HttpServlet {
     	HttpSession session = request.getSession();
 	    List<String> errorMessages = new ArrayList<String>();
 
-	    //条件追加 サービス→ダオ←messageid存在しなければ同じく表示該当するmessageIdは存在するか
 	    String messageIdStr = request.getParameter("messageId");
 
 	    if (StringUtils.isBlank(messageIdStr) || !messageIdStr.matches("\\d+")) {
@@ -57,17 +57,14 @@ public class EditServlet extends HttpServlet {
 
 	    int messageId = Integer.parseInt(messageIdStr);
 
-      Message message = new MessageService().findByText(messageId);
-
-      if (message == null) {
-          errorMessages.add("不正なパラメータが入力されました");
-          session.setAttribute("errorMessages", errorMessages);
-          response.sendRedirect("./");
-          return;
-      }
-
-      request.setAttribute("messageText", message.getText());
-      request.setAttribute("messageId", messageId);
+	    List<UserMessage> message = new MessageService().select(messageId);
+	    if (message.size() == 0) {
+            errorMessages.add("不正なパラメータが入力されました");
+            session.setAttribute("errorMessages", errorMessages);
+            response.sendRedirect("./");
+            return;
+        }
+      request.setAttribute("message", message.get(0));
       request.getRequestDispatcher("/edit.jsp").forward(request, response);
     }
     @Override
@@ -82,23 +79,18 @@ public class EditServlet extends HttpServlet {
 	    String text = request.getParameter("text");
 	    int messageId = Integer.parseInt(request.getParameter("messageId"));
 
-	    if (!isValid(text, errorMessages)) {
-	    	request.setAttribute("errorMessages", errorMessages);
-	    	request.setAttribute("messageText", text);
-	    	request.setAttribute("messageId", messageId);
-            request.getRequestDispatcher("/edit.jsp").forward(request, response);
-            return;
-        }
-
-
-
 	    //編集したテキストパラメータ取得
 	    Message message = new Message();
 	    message.setText(text);
 	    message.setId(messageId);
 
+	    if (!isValid(text, errorMessages)) {
+	    	request.setAttribute("errorMessages", errorMessages);
+	    	request.setAttribute("message", message);
+            request.getRequestDispatcher("/edit.jsp").forward(request, response);
+            return;
+        }
 	    new MessageService().update(message);
-
 	    response.sendRedirect("./");
 	}
     private boolean isValid(String text, List<String> errorMessages) {
