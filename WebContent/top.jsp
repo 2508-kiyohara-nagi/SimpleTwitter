@@ -74,6 +74,29 @@
 		    		</form>
 		    	</c:if>
         	</div>
+        	<div class="commentForm-area">
+				<c:forEach items="${comments}" var="comment"><!--コメントの表示の作成-->
+				    <c:if test="${comment.messageId == message.id}">
+				        <div class="comment">
+							<div class="account-name">
+						        <c:out value="${comment.account}" />
+								<c:out value="${comment.name}" />
+						    </div>
+					    	<pre class="text"><c:out value="${comment.text}" /></pre>
+					    	<div class="date"><fmt:formatDate value="${comment.createdDate}" pattern="yyyy/MM/dd HH:mm:ss" /></div>
+					    </div>
+					</c:if>
+				</c:forEach>
+		    	<c:if test="${ isShowMessageForm }">
+				        <form action="comment" method="post">
+				        	返信<br />
+				            <textarea name="text" cols="100" rows="5" class="tweet-box"></textarea>
+				            <br />
+				            <input type="hidden" name="messageId" value="${message.id}" />
+				            <input type="submit" value="返信">（140文字まで）
+				        </form>
+				</c:if>
+			</div>
     	</c:forEach>
 	</div>
     <div class="copyright"> Copyright(c)KiyoharaNagi</div>
