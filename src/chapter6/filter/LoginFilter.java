@@ -33,15 +33,10 @@ public class LoginFilter implements Filter{
 		}else {
 			List<String> errorMessages = new ArrayList<String>();
 			errorMessages.add("ログインしてください");
-			//request.setAttribute("errorMessages", errorMessages);
 			session.setAttribute("errorMessages", errorMessages);
 			//ログイン画面に移行
 			((HttpServletResponse) response).sendRedirect("./login");
-
 		}
-
-
-
 	}
 	@Override
 	public void init(FilterConfig config) {

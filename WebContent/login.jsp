@@ -20,6 +20,7 @@
                         </c:forEach>
                     </ul>
                 </div>
+                <c:remove var="errorMessages" scope="session" /><!--セッションを取り除く-->
             </c:if>
 
             <form action="login" method="post"><br />

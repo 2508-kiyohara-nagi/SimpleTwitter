@@ -40,48 +40,32 @@ public class UserMessageDao {
         PreparedStatement ps = null;
         try {
             StringBuilder sql = new StringBuilder();
-            //結合条件の指定
+
+            sql.append("SELECT ");
+            sql.append("    messages.id as id, ");
+            sql.append("    messages.text as text, ");
+            sql.append("    messages.user_id as user_id, ");
+            sql.append("    users.account as account, ");
+            sql.append("    users.name as name, ");
+            sql.append("    messages.created_date as created_date ");
+            sql.append("FROM messages ");
+            //2つ以上のテーブルから結合
+            sql.append("INNER JOIN users ");
+            sql.append("ON messages.user_id = users.id ");
+            sql.append("WHERE messages.created_date BETWEEN ? ");//開始時刻
+            sql.append("AND  ? ");//終了時刻
             if(id != null) {
+            	sql.append("AND messages.user_id = ? ");
+            }
 
-	            sql.append("SELECT ");
-	            sql.append("    messages.id as id, ");
-	            sql.append("    messages.text as text, ");
-	            sql.append("    messages.user_id as user_id, ");
-	            sql.append("    users.account as account, ");
-	            sql.append("    users.name as name, ");
-	            sql.append("    messages.created_date as created_date ");
-	            sql.append("FROM messages ");
-	            //2つ以上のテーブルから結合
-	            sql.append("INNER JOIN users ");
-	            sql.append("ON messages.user_id = users.id ");
-	            sql.append("WHERE messages.user_id = ? ");
-	            sql.append("AND messages.created_date >= ? ");//開始時刻
-	            sql.append("AND messages.created_date <= ? ");//終了時刻
-	            sql.append("ORDER BY created_date DESC limit " + num);
-	            ps = connection.prepareStatement(sql.toString());
+            sql.append("ORDER BY created_date DESC  limit " + num);
 
-	            ps.setInt(1, id);
-	            ps.setString(2, start);//開始時刻
-	            ps.setString(3, end);//終了時刻
-            }else {
-            	sql.append("SELECT ");
-                sql.append("    messages.id as id, ");
-                sql.append("    messages.text as text, ");
-                sql.append("    messages.user_id as user_id, ");
-                sql.append("    users.account as account, ");
-                sql.append("    users.name as name, ");
-                sql.append("    messages.created_date as created_date ");
-                sql.append("FROM messages ");
-                sql.append("INNER JOIN users ");
-                sql.append("ON messages.user_id = users.id ");
-                sql.append("WHERE messages.created_date >= ?  ");
-                sql.append("AND messages.created_date <= ? ");
-                sql.append("ORDER BY created_date DESC limit " + num);
+            ps = connection.prepareStatement(sql.toString());
 
-                ps = connection.prepareStatement(sql.toString());
-
-	            ps.setString(1, start);//開始時刻
-	            ps.setString(2, end);//終了時刻
+            ps.setString(1, start);//開始時刻
+            ps.setString(2, end);//終了時刻
+            if(id != null) {
+                ps.setInt(3, id);
             }
 
             ResultSet rs = ps.executeQuery();
