@@ -1,6 +1,7 @@
 package chapter6.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -49,18 +50,26 @@ public class TopServlet extends HttpServlet {
         if (user != null) {
             isShowMessageForm = true;
         }
+        List<String> errorMessages = new ArrayList<String>();
+
         /*
           *String型のuser_idの値をrequest.getParameter("user_id")で
           *JSPから受け取るように設定
           *MessageServiceのselectに引数としてString型のuser_idを追加
          */
         String userId = request.getParameter("user_id");
-        List<UserMessage> messages = new MessageService().select(userId);
+        //startとendのパラメータ取得
+        String start = request.getParameter("start");
+        String end = request.getParameter("end");
+        List<UserMessage> messages = new MessageService().select(userId, start, end);
         List<UserComment> comments = new CommentService().select();
 
+        request.setAttribute("start", start);
+        request.setAttribute("end", end);
         request.setAttribute("messages", messages);
         request.setAttribute("comments", comments);
         request.setAttribute("isShowMessageForm", isShowMessageForm);
+        request.setAttribute("errorMessages", errorMessages);
         request.getRequestDispatcher("/top.jsp").forward(request, response);
     }
 }
